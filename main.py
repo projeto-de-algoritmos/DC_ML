@@ -1,6 +1,101 @@
 from jogadores import jogadores
 
 
+def contaInversoes(lista, tam):
+    # Lista temporária que receberá
+    # os jogadores durante a ordenação
+    lista_temp = [{
+        "id": 0,
+        "nome": "",
+        "ptsFIFA": 0,
+        "ptsEnzo": 0,
+        "ptsRetro": 0,
+    }] * tam
+
+    # Lista auxiliar que receberá
+    # a lista final ordenada,
+    # preservando a lista original.
+    lista_aux = lista.copy()
+
+    return mergeSort(lista_aux, lista_temp,
+                     0, tam - 1)
+
+
+def mergeSort(lista, lista_temp, left, right):
+    ct_inversoes = 0
+
+    # Realiza a recursão apenas se a lista tiver
+    # mais de um elemento
+    if left < right:
+        # Valor para o índice que indica o meio da lista
+        meio = (left + right) // 2
+
+        # Chamada para a primeira metade da lista
+        ct_inversoes += mergeSort(lista, lista_temp,
+                                  left, meio)
+
+        # Chamada para a segunda metade da lista
+        ct_inversoes += mergeSort(lista, lista_temp,
+                                  meio + 1, right)
+
+        # Junção das metades
+        ct_inversoes += merge(lista, lista_temp,
+                              left, meio, right)
+    return ct_inversoes
+
+
+def merge(lista, lista_temp, left, meio, right):
+    # Iterador para a primeira metade
+    i = left
+
+    # Iterador para a segunda metade
+    j = meio + 1
+
+    # Iterador para a lista temporária
+    # que será ordenada
+    k = left
+
+    ct_inversoes = 0
+
+    # Garante que as comparações entre as metades
+    # e a contagem de inversões serão interrompidos,
+    # caso i ou j excedam o limite de cada lista
+    while i <= meio and j <= right:
+
+        if lista[i]["ptsFIFA"] <= lista[j]["ptsFIFA"]:  # Não ocorreu inversão
+            # compara com base nos pontos FIFA de cada jogador
+
+            # Só o elemento da primeira metade é inserido
+            lista_temp[k] = lista[i]
+            k += 1
+            i += 1
+        else:
+            # Só o elemento da segunda metade é inserido
+            # e ocorre a contagem geral das inversões
+            lista_temp[k] = lista[j]
+            ct_inversoes += (meio - i + 1)
+            k += 1
+            j += 1
+
+    # Insere na lista temporária os elementos restantes
+    # da primeira metade caso o iterador j tenha excedido
+    # seu limite
+    while i <= meio:
+        lista_temp[k] = lista[i]
+        k += 1
+        i += 1
+
+    # Insere na lista temporária os elementos restantes
+    # da segunda metade caso o iterador i tenha excedido
+    # seu limite
+    while j <= right:
+        lista_temp[k] = lista[j]
+        k += 1
+        j += 1
+
+    return ct_inversoes
+
+
 print('-=' * 20)
 print('  Bem-vindo(a) ao Melhores Jogadores !')
 print('-=' * 20)
@@ -19,7 +114,7 @@ pos = 0
 
 while pos < 5:
     try:
-        num = int(input(f'Escolha o {pos+1}° jogador (número): '))
+        num = int(input(f'Escolha o {pos + 1}° jogador (número): '))
 
         if num not in range(1, 21):
             raise ValueError
@@ -39,10 +134,10 @@ while pos < 5:
         print('!! Informe um número válido !!')
 
     except AssertionError:
-        print('Esse jogador já foi selecionado.')
+        print('!! Esse jogador já foi selecionado !!')
 
-print('-'*30)
-print('Este é o seu Top 5 melhores atacantes:')
+tam = len(listaUsuario)
+inversoes = contaInversoes(listaUsuario, tam)
 
-for n, v in enumerate(listaUsuario):
-    print(f'{n+1}°- {v["nome"]}', end='; ')
+print('-' * 30)
+print("Número total de inversões:", inversoes)
