@@ -2,6 +2,11 @@ from jogadores import jogadores
 
 
 def contaInversoes(lista, tam):
+    ```
+    Função que retorna um dicionário com a lista ordenada
+    crescente para cada tipo de pontuação e a quantidade de
+    inversões realizadas para a ordenação
+    ```
     # Lista temporária que receberá
     # os jogadores durante a ordenação
     lista_temp = [{
@@ -12,16 +17,29 @@ def contaInversoes(lista, tam):
         "ptsRetro": 0,
     }] * tam
 
-    # Lista auxiliar que receberá
-    # a lista final ordenada,
+    # Listas que receberam
+    # a lista final ordenada, de acordo com o tipo de pontuação,
     # preservando a lista original.
-    lista_aux = lista.copy()
+    lista_fifa = lista.copy()
+    lista_enzo = lista.copy()
+    lista_retro = lista.copy()
 
-    return mergeSort(lista_aux, lista_temp,
-                     0, tam - 1)
+    
+    # Para cada tipo de pontuação, a lista será organizada,
+    # E retornará um número de inversões (comparações)
+    inversoes_fifa = mergeSort(lista_aux, lista_temp, 0, tam - 1, "ptsFIFA")
+    inversoes_enzo = mergeSort(lista_aux, lista_temp, 0, tam - 1, "ptsEnzo")
+    inversoes_retro = mergeSort(lista_aux, lista_temp, 0, tam - 1, "ptsRetro")
 
 
-def mergeSort(lista, lista_temp, left, right):
+    return {
+        "fifa": {"lista": lista_fifa, "inversoes": inversoes_fifa},
+        "enzo": {"lista": lista_enzo, "inversoes": inversoes_enzo},
+        "retro": {"lista": lista_retro, "inversoes": inversoes_retro},
+    }
+
+
+def mergeSort(lista, lista_temp, left, right, tipo_pts):
     ct_inversoes = 0
 
     # Realiza a recursão apenas se a lista tiver
@@ -32,19 +50,19 @@ def mergeSort(lista, lista_temp, left, right):
 
         # Chamada para a primeira metade da lista
         ct_inversoes += mergeSort(lista, lista_temp,
-                                  left, meio)
+                                  left, meio, tipo_pts)
 
         # Chamada para a segunda metade da lista
         ct_inversoes += mergeSort(lista, lista_temp,
-                                  meio + 1, right)
+                                  meio + 1, right, tipo_pts)
 
         # Junção das metades
         ct_inversoes += merge(lista, lista_temp,
-                              left, meio, right)
+                              left, meio, right, tipo_pts)
     return ct_inversoes
 
 
-def merge(lista, lista_temp, left, meio, right):
+def merge(lista, lista_temp, left, meio, right, tipo_pts):
     # Iterador para a primeira metade
     i = left
 
@@ -62,8 +80,8 @@ def merge(lista, lista_temp, left, meio, right):
     # caso i ou j excedam o limite de cada lista
     while i <= meio and j <= right:
 
-        if lista[i]["ptsFIFA"] <= lista[j]["ptsFIFA"]:  # Não ocorreu inversão
-            # compara com base nos pontos FIFA de cada jogador
+        if lista[i][tipo_pts] <= lista[j][tipo_pts]:  # Não ocorreu inversão
+            # compara com base no tipo de ponto de cada jogador
 
             # Só o elemento da primeira metade é inserido
             lista_temp[k] = lista[i]
@@ -137,7 +155,12 @@ while pos < 5:
         print('!! Esse jogador já foi selecionado !!')
 
 tam = len(listaUsuario)
-inversoes = contaInversoes(listaUsuario, tam)
+inversoes_e_listas = contaInversoes(listaUsuario, tam)
 
 print('-' * 30)
-print("Número total de inversões:", inversoes)
+print("Sua lista organizada por pontos FIFA:", inversoes_e_listas["fifa"]["lista"])
+print("Número total de inversões por pontos FIFA:", inversoes_e_listas["fifa"]["inversoes"])
+print("Sua lista organizada por pontos ENZO", inversoes_e_listas["enzo"]["lista"])
+print("Número total de inversões por pontos ENZO:", inversoes_e_listas["enzo"]["inversoes"])
+print("Sua lista organizada por pontos Retro:", inversoes_e_listas["retro"]["lista"])
+print("Número total de inversões por pontos Retro:", inversoes_e_listas["retro"]["inversoes"])
