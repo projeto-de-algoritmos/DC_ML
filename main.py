@@ -1,111 +1,58 @@
 from jogadores import jogadores
+from ordenacao import mergeSort
 
 
-def contaInversoes(lista, tam):
+def contaInversoes(lista, tam, tipo: str):
+
     # Lista temporária que receberá
     # os jogadores durante a ordenação
     lista_temp = [{
         "id": 0,
         "nome": "",
-        "ptsFIFA": 0,
-        "ptsEnzo": 0,
-        "ptsRetro": 0,
+        "rkng2000": 0,
+        "rkngContemp": 0,
+        "rkng90-": 0,
     }] * tam
 
-    # Lista auxiliar que receberá
-    # a lista final ordenada,
-    # preservando a lista original.
-    lista_aux = lista.copy()
-
-    return mergeSort(lista_aux, lista_temp,
-                     0, tam - 1)
+    return mergeSort(lista, lista_temp,
+                     0, tam - 1, tipo)
 
 
-def mergeSort(lista, lista_temp, left, right):
-    ct_inversoes = 0
+def contaEpoca(lista):
+    """
+    Analisa qual a época dos jogadores que aparecem mais
+    no Top 5 do usuário.
+    """
 
-    # Realiza a recursão apenas se a lista tiver
-    # mais de um elemento
-    if left < right:
-        # Valor para o índice que indica o meio da lista
-        meio = (left + right) // 2
+    from statistics import multimode
 
-        # Chamada para a primeira metade da lista
-        ct_inversoes += mergeSort(lista, lista_temp,
-                                  left, meio)
+    e = [x["epoca"] for x in lista]
 
-        # Chamada para a segunda metade da lista
-        ct_inversoes += mergeSort(lista, lista_temp,
-                                  meio + 1, right)
+    if len(multimode(e)) > 1:
+        return 'unico'
 
-        # Junção das metades
-        ct_inversoes += merge(lista, lista_temp,
-                              left, meio, right)
-    return ct_inversoes
+    if e[0] == 1:
+        return 'rkng90-'
+    elif e[0] == 2:
+        return 'rkng2000'
+    elif e[0] == 3:
+        return 'rkngContemp'
 
 
-def merge(lista, lista_temp, left, meio, right):
-    # Iterador para a primeira metade
-    i = left
+print('-=' * 35)
+msg = 'Bem-vindo(a) ao Melhores Jogadores !'
+print(f'{msg:^70}')
+print('-=' * 35)
 
-    # Iterador para a segunda metade
-    j = meio + 1
+for n in range(10):
+    print(f'{n + 1:<2} - {jogadores[n]["nome"]:<20} \
+{n + 11:<2} - {jogadores[n + 10]["nome"]:<20} \
+{n + 21:<2} - {jogadores[n + 20]["nome"]:<20}')
 
-    # Iterador para a lista temporária
-    # que será ordenada
-    k = left
-
-    ct_inversoes = 0
-
-    # Garante que as comparações entre as metades
-    # e a contagem de inversões serão interrompidos,
-    # caso i ou j excedam o limite de cada lista
-    while i <= meio and j <= right:
-
-        if lista[i]["ptsFIFA"] <= lista[j]["ptsFIFA"]:  # Não ocorreu inversão
-            # compara com base nos pontos FIFA de cada jogador
-
-            # Só o elemento da primeira metade é inserido
-            lista_temp[k] = lista[i]
-            k += 1
-            i += 1
-        else:
-            # Só o elemento da segunda metade é inserido
-            # e ocorre a contagem geral das inversões
-            lista_temp[k] = lista[j]
-            ct_inversoes += (meio - i + 1)
-            k += 1
-            j += 1
-
-    # Insere na lista temporária os elementos restantes
-    # da primeira metade caso o iterador j tenha excedido
-    # seu limite
-    while i <= meio:
-        lista_temp[k] = lista[i]
-        k += 1
-        i += 1
-
-    # Insere na lista temporária os elementos restantes
-    # da segunda metade caso o iterador i tenha excedido
-    # seu limite
-    while j <= right:
-        lista_temp[k] = lista[j]
-        k += 1
-        j += 1
-
-    return ct_inversoes
-
-
-print('-=' * 20)
-print('  Bem-vindo(a) ao Melhores Jogadores !')
-print('-=' * 20)
-
-for n, v in enumerate(jogadores):
-    print(f'{n + 1:<2} - {v["nome"]}')
-
-print('-' * 20)
-print('Escolha 5 atacantes dentre os acima para formar o seu Top 5\n'
+print('-' * 50)
+print('Escolha 5 atacantes dentre 30 os acima para formar o seu Top 5\n'
       'melhores atacantes do futebol. (em ordem do primeiro ao último)')
+print('\nAo final descubra com qual estilo sua escolha se parece mais!')
 print('-' * 30)
 
 listaUsuario = list()
@@ -116,7 +63,7 @@ while pos < 5:
     try:
         num = int(input(f'Escolha o {pos + 1}° jogador (número): '))
 
-        if num not in range(1, 21):
+        if num not in range(1, 31):
             raise ValueError
 
         if num not in escolhido:
@@ -127,7 +74,7 @@ while pos < 5:
         for jogador in jogadores:
             if jogador["id"] == num:
                 listaUsuario.append(jogador)
-
+        print(f'Escolheu {listaUsuario[pos]["nome"]}.')
         pos += 1
 
     except ValueError:
@@ -137,7 +84,46 @@ while pos < 5:
         print('!! Esse jogador já foi selecionado !!')
 
 tam = len(listaUsuario)
-inversoes = contaInversoes(listaUsuario, tam)
+
+tipoRanking = contaEpoca(listaUsuario)
+
+epocas = {"rkng2000": 'Anos 2000',
+          "rkngContemp": 'Anos 2010+',
+          "rkng90-": 'Década de 90 (e antes)'}
 
 print('-' * 30)
-print("Número total de inversões:", inversoes)
+if tipoRanking not in ['rkng2000', 'rkngContemp', 'rkng90-']:
+    print('Legal, você tem um estilo único!\nTem jogadores de várias épocas aí hein.\n')
+
+    ordem = [n["nome"] for n in listaUsuario]
+    print(f'Esta é a ordem do seu Top 5:\n{ordem}')
+
+    lista1 = listaUsuario.copy()
+    i1 = contaInversoes(lista1, tam, 'rkng2000')
+    ordem1 = [n["nome"] for n in lista1]
+    print(f'\nSeu Top 5 com base no ranking dos anos 2000:\n{ordem1} -> Qtd de inversões: {i1}')
+
+    lista2 = listaUsuario.copy()
+    i2 = contaInversoes(lista2, tam, 'rkngContemp')
+    ordem2 = [n["nome"] for n in lista2]
+    print(f'\nSeu Top 5 com base no ranking dos anos mais recentes:\n{ordem2} -> Qtd de inversões: {i2}')
+
+    lista3 = listaUsuario.copy()
+    i3 = contaInversoes(lista3, tam, 'rkng90-')
+    ordem3 = [n["nome"] for n in lista3]
+    print(f'\nSeu Top 5 com base no ranking anos 90:\n{ordem3} -> Qtd de inversões: {i3}')
+
+else:
+    print(f'Você tem um estilo mais perecido com \
+a seguinte época: {epocas[tipoRanking]}')
+
+    lista_aux = listaUsuario.copy()
+    inv = contaInversoes(lista_aux, tam, tipoRanking)
+
+    nomes = [n["nome"] for n in listaUsuario]
+    print(f'\nEsta é a ordem do seu Top 5:\n{nomes}')
+
+    nomes = [n["nome"] for n in lista_aux]
+    print(f'\nSeu Top 5 com base no ranking dessa época ficaria assim:\n{nomes} -> Qtd de inversões: {inv}')
+
+print('-' * 30)
