@@ -68,11 +68,9 @@ def merge(lista, lista_temp, left, meio, right, tipo):
         k += 1
         j += 1
 
-    # Cópia dos elementos the sorted subarray into
-    # Original array
-
-    for loop_var in range(left, right + 1):
-        # fazer retornar essa lista para o usuário poder ver também
-        lista[loop_var] = lista_temp[loop_var]
+    # Inserção dos elementos (jogadores)
+    # na lista passada como parâmetro
+    for n in range(left, right + 1):
+        lista[n] = lista_temp[n]
 
     return ct_inversoes
