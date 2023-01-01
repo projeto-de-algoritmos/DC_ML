@@ -11,18 +11,25 @@
 | 19/0093331 |  Matheus Costa |
 
 ## Sobre
-O projeto tem objetivo de comparar a lista de melhores jogadores escolhida pelo usuário e o proposto pela dupla. 
+O projeto tem objetivo de comparar a lista de melhores jogadores escolhida pelo usuário com os rankings predefinidos pela dupla, utilizando da Contagem de Inversões para reorganizar a lista do usuário com base nos mesmos rankings. 
 
 ## Screenshots
 Adicione 3 ou mais screenshots do projeto em funcionamento.
 
-## Instalação 
-**Linguagem**: Python3 <br>
+## Instalação
+**Linguagem**: Python3.8 <br>
 **Framework**: (caso exista)<br>
-Descreva os pré-requisitos para rodar o seu projeto e os comandos necessários.
+Tenha ao menos a versão python3.8 instalada na máquina.
 
-## Uso 
-Explique como usar seu projeto caso haja algum passo a passo após o comando de execução.
+## Uso
+Após clonar o repositório, execute o projeto digitando no terminal o comando:
 
-## Outros 
+```
+python3 main.py
+```
+
+Com o projeto rodando, escolha 5 jogadores (na ordem do primeiro ao último) dentre os que aparecerão na tela para formar seu Top 5, e aguarde o resultado das comparações.
+
+
+## Outros
 Quaisquer outras informações sobre seu projeto podem ser descritas abaixo.
