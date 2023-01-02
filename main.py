@@ -24,18 +24,18 @@ def contaEpoca(lista):
     no Top 5 do usuário.
     """
 
-    from statistics import multimode
+    from statistics import multimode, mode
 
     e = [x["epoca"] for x in lista]
 
     if len(multimode(e)) > 1:
         return 'unico'
 
-    if e[0] == 1:
+    if mode(e) == 1:
         return 'rkng90-'
-    elif e[0] == 2:
+    elif mode(e) == 2:
         return 'rkng2000'
-    elif e[0] == 3:
+    elif mode(e) == 3:
         return 'rkngContemp'
 
 
